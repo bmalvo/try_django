@@ -2,6 +2,7 @@
 To render HTML web pages
 """
 
+from django.template.loader import render_to_string
 from django.http import HttpResponse
 import random
 from articles.models import Articles
@@ -17,12 +18,16 @@ def home_view(request):
     random_id = random.randint(1, 4)
     article_obj = Articles.objects.get(id=random_id)
 
-    H1_STRING = f"""
-    <h1> {article_obj.title} (id: {article_obj.id}) ! </h1>"""
+    context = {
+        'title': article_obj.title,
+        'id': article_obj.id,
+        'content': article_obj.content
+    }
 
-    P_STRING = f"""
-    <p> {article_obj.content}</p>
-    """
-    HTML_STRING = H1_STRING + P_STRING
+    HTML_STRING = render_to_string('home-view.html', context=context)
+    # HTML_STRING = """
+    #     <h1> {title} (id: {id})!</h1>
+    #     <p> {content}!</p>
+    #     """.format(**context)
 
     return HttpResponse(HTML_STRING)
