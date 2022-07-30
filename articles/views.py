@@ -27,20 +27,16 @@ def article_search_view(request):
 @login_required
 def article_create_view(request):
     # print(request.POST)
-    form = ArticleForm()
-    print(dir(form))
+    form = ArticleForm(request.POST or None)
     context = {
         'form': form
     }
-    if request.method == 'POST':
-        form = ArticleForm(request.POST)
-        if form.is_valid():
-            title = request.POST.get('title')
-            content = request.POST.get('content')
-        print(title, content)
-        article_object = Articles.objects.create(title=title, content=content)
-        context['object'] = article_object
-        context['created'] = True
+    if form.is_valid():
+        title = request.POST.get('title')
+        content = request.POST.get('content')
+    article_object = Articles.objects.create(title=title, content=content)
+    context['object'] = article_object
+    context['created'] = True
     return render(request, 'articles/create.html', context=context)
 
 
